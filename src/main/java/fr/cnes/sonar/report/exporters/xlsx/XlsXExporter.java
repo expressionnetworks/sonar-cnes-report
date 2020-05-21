@@ -30,7 +30,7 @@ public class XlsXExporter implements IExporter {
     /**
      *  Name of the tab containing all detailed issues
      */
-    private static final String ALL_DETAILS_SHEET_NAME = "All";
+    private static final String ALL_DETAILS_SHEET_NAME = "ISSUES";
     /**
      * Name for the table containing selected resources
      */
@@ -42,7 +42,7 @@ public class XlsXExporter implements IExporter {
     /**
      * Name for the table containing all raw resources
      */
-    private static final String ALL_TABLE_NAME = "all";  
+    private static final String ALL_TABLE_NAME = "issues";  
     /**
      * Name for the tab containing metrics
      */
@@ -54,7 +54,7 @@ public class XlsXExporter implements IExporter {
     /**
      * Name for the sheet containing all hotspots
      */
-    private static final String ALL_HOTSPOTS_SHEET_NAME = "Hotspots";
+    private static final String ALL_HOTSPOTS_SHEET_NAME = "HOTSPOTS";
     /**
      * Name for the table containing all raw resources
      */
@@ -99,10 +99,10 @@ public class XlsXExporter implements IExporter {
         ) {
 
             // retrieve the sheet aiming to contain selected resources
-            final XSSFSheet selectedSheet = (XSSFSheet) workbook.getSheet(ISSUES_SHEET_NAME);
+            //final XSSFSheet selectedSheet = (XSSFSheet) workbook.getSheet(ISSUES_SHEET_NAME);
 
             // retrieve the sheet aiming to contain selected resources
-            final XSSFSheet unconfirmedSheet = (XSSFSheet) workbook.getSheet(UNCONFIRMED_SHEET_NAME);
+            //final XSSFSheet unconfirmedSheet = (XSSFSheet) workbook.getSheet(UNCONFIRMED_SHEET_NAME);
 
             // retrieve the sheet aiming to contain selected resources
             final XSSFSheet allDataSheet = (XSSFSheet) workbook.getSheet(ALL_DETAILS_SHEET_NAME);
@@ -111,19 +111,19 @@ public class XlsXExporter implements IExporter {
             final XSSFSheet allHotSheet = (XSSFSheet) workbook.getSheet(ALL_HOTSPOTS_SHEET_NAME);
 
             // retrieve the sheet with metrics
-            final XSSFSheet metricsSheet = (XSSFSheet) workbook.getSheet(METRICS_SHEET_NAME);
+            //final XSSFSheet metricsSheet = (XSSFSheet) workbook.getSheet(METRICS_SHEET_NAME);
 
             // write selected resources in the file
-            XlsXTools.addSelectedData(report.getIssues(), selectedSheet, SELECTED_TABLE_NAME);
+            //XlsXTools.addSelectedData(report.getIssues(), selectedSheet, SELECTED_TABLE_NAME);
 
             // write selected resources in the file
-            XlsXTools.addSelectedData(report.getUnconfirmed(), unconfirmedSheet, UNCONFIRMED_TABLE_NAME);
+            //XlsXTools.addSelectedData(report.getUnconfirmed(), unconfirmedSheet, UNCONFIRMED_TABLE_NAME);
 
             // write all raw resources in the third sheet
             XlsXTools.addListOfMap(allDataSheet, report.getRawIssues(), ALL_TABLE_NAME);
 
             // write all metrics in the metric sheet
-            XlsXTools.addListOfMap(metricsSheet, report.getComponents(), METRICS_TABLE_NAME);
+            //XlsXTools.addListOfMap(metricsSheet, report.getComponents(), METRICS_TABLE_NAME);
 
             // write all raw resources in the hotspot sheet
             XlsXTools.addListOfMap(allHotSheet, report.getRawHotspots(), HOTSPOT_TABLE_NAME);
