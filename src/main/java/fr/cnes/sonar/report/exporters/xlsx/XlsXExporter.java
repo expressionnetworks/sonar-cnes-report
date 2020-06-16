@@ -4,9 +4,18 @@ import fr.cnes.sonar.report.exceptions.BadExportationDataTypeException;
 import fr.cnes.sonar.report.exporters.IExporter;
 import fr.cnes.sonar.report.model.Report;
 import fr.cnes.sonar.report.utils.StringManager;
+
+import org.apache.poi.ss.usermodel.DataConsolidateFunction;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.apache.poi.xssf.usermodel.XSSFTable;
+import org.apache.poi.xssf.usermodel.XSSFPivotTable;
+import org.apache.poi.ss.util.AreaReference;
+import org.apache.poi.ss.util.CellReference;
+import org.apache.poi.ss.SpreadsheetVersion;
+
 
 import java.io.*;
 import java.util.logging.Level;
@@ -59,6 +68,11 @@ public class XlsXExporter implements IExporter {
      * Name for the table containing all raw resources
      */
     private static final String HOTSPOT_TABLE_NAME = "hotspots";
+
+      /**
+     * Name for the sheet containing the summary
+     */
+    private static final String SUMMARY_SHEET_NAME = "SUMMARY";
 
     /**
      * Overridden export for XlsX
@@ -128,11 +142,47 @@ public class XlsXExporter implements IExporter {
             // write all raw resources in the hotspot sheet
             XlsXTools.addListOfMap(allHotSheet, report.getRawHotspots(), HOTSPOT_TABLE_NAME);
 
+            // write summary sheet
+            XSSFSheet summarySheet = (XSSFSheet) workbook.createSheet(SUMMARY_SHEET_NAME);
+            
+            // Label Pivot Tables 
+            XSSFRow row  = summarySheet.createRow(0);
+            row.createCell(0).setCellValue("ISSUES");
+            row.createCell(3).setCellValue("HOTSPOTS");
+
+            // Get the reference for Pivot Data 
+            XSSFTable table = XlsXTools.findTableByName(allDataSheet, ALL_TABLE_NAME);
+
+            // Create Pivot Table only if there are findings 
+            if (table.getRowCount() > 2) {
+                XSSFPivotTable pivotTableIssues = summarySheet.createPivotTable(table,  new CellReference("A2"));
+
+                pivotTableIssues.addRowLabel(10);
+                pivotTableIssues.addColumnLabel(DataConsolidateFunction.COUNT, 0);
+                pivotTableIssues.addRowLabel(0);
+                pivotTableIssues.getCTPivotTableDefinition().getPivotFields().getPivotFieldArray(0).setDataField(true);
+            } else {
+                row.createCell(1).setCellValue("NO FINDINGS!!!");
+            }
+
+            // Get the reference for Pivot Data 
+            table = XlsXTools.findTableByName(allHotSheet, HOTSPOT_TABLE_NAME);
+        
+            // Create Pivot Table only if there are findings
+            if (table.getRowCount() > 2) {       
+                XSSFPivotTable pivotTableHot = summarySheet.createPivotTable(table,  new CellReference("D2"));
+
+                pivotTableHot.addColumnLabel(DataConsolidateFunction.COUNT, 2);
+                pivotTableHot.addRowLabel(2);
+                pivotTableHot.getCTPivotTableDefinition().getPivotFields().getPivotFieldArray(2).setDataField(true);
+            } else {
+                row.createCell(4).setCellValue("NO FINDINGS!!!");
+            }
+
             // write output as file
             workbook.write(fileOut);
         }
 
         return new File(outputFilePath);
     }
-
 }
