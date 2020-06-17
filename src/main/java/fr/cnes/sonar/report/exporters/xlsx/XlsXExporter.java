@@ -154,7 +154,7 @@ public class XlsXExporter implements IExporter {
             XSSFTable table = XlsXTools.findTableByName(allDataSheet, ALL_TABLE_NAME);
 
             // Create Pivot Table only if there are findings 
-            if (table.getRowCount() > 2) {
+            if (report.getRawIssues().size() > 0) {
                 XSSFPivotTable pivotTableIssues = summarySheet.createPivotTable(table,  new CellReference("A2"));
 
                 pivotTableIssues.addRowLabel(10);
@@ -169,12 +169,14 @@ public class XlsXExporter implements IExporter {
             table = XlsXTools.findTableByName(allHotSheet, HOTSPOT_TABLE_NAME);
         
             // Create Pivot Table only if there are findings
-            if (table.getRowCount() > 2) {       
+            if (report.getRawHotspots().size() > 0) {       
                 XSSFPivotTable pivotTableHot = summarySheet.createPivotTable(table,  new CellReference("D2"));
 
-                pivotTableHot.addColumnLabel(DataConsolidateFunction.COUNT, 2);
-                pivotTableHot.addRowLabel(2);
-                pivotTableHot.getCTPivotTableDefinition().getPivotFields().getPivotFieldArray(2).setDataField(true);
+                pivotTableHot.addColumnLabel(DataConsolidateFunction.COUNT, 1);
+                pivotTableHot.addRowLabel(1);
+                pivotTableHot.addRowLabel(7);
+
+                pivotTableHot.getCTPivotTableDefinition().getPivotFields().getPivotFieldArray(1).setDataField(true);
             } else {
                 row.createCell(4).setCellValue("NO FINDINGS!!!");
             }
