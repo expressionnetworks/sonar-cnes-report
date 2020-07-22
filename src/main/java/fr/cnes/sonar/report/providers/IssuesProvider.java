@@ -209,13 +209,42 @@ public class IssuesProvider extends AbstractDataProvider {
         // current page
         int page = 1;
 
-        // search all issues of the project
+        // search all CONFIRMED issues of the project
         while(goon) {
             // get maximum number of results per page
             final int maxPerPage = Integer.parseInt(getRequest(MAX_PER_PAGE_SONARQUBE));
             // prepare the server to get all the issues
             final String request = String.format(getRequest(GET_ISSUES_REQUEST),
                     getServer().getUrl(), getProjectKey(), maxPerPage, page, CONFIRMED, getBranch());
+            // perform the request to the server
+            final JsonObject jo = request(request);
+            // transform json to Issue objects
+            final Map [] tmp = (getGson().fromJson(jo.get(ISSUES), Map[].class));
+            // add them to the final result
+            res.addAll(Arrays.asList(tmp));
+            // check next results' pages
+            int number = (jo.get(TOTAL).getAsInt());
+
+            // check overflow
+            if(number > MAXIMUM_ISSUES_LIMIT) {
+                number = MAXIMUM_ISSUES_LIMIT;
+                overflow = true;
+            }
+
+            goon = page* maxPerPage < number;
+            page++;
+        }
+
+        goon = true;
+        page = 1;
+        
+        // search all UNCONFIRMED issues of the project
+        while(goon) {
+            // get maximum number of results per page
+            final int maxPerPage = Integer.parseInt(getRequest(MAX_PER_PAGE_SONARQUBE));
+            // prepare the server to get all the issues
+            final String request = String.format(getRequest(GET_ISSUES_REQUEST),
+                    getServer().getUrl(), getProjectKey(), maxPerPage, page, UNCONFIRMED, getBranch());
             // perform the request to the server
             final JsonObject jo = request(request);
             // transform json to Issue objects

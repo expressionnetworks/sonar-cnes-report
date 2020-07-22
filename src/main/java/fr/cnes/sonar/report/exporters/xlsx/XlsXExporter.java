@@ -157,8 +157,11 @@ public class XlsXExporter implements IExporter {
             if (report.getRawIssues().size() > 0) {
                 XSSFPivotTable pivotTableIssues = summarySheet.createPivotTable(table,  new CellReference("A2"));
 
-                pivotTableIssues.addRowLabel(10);
                 pivotTableIssues.addColumnLabel(DataConsolidateFunction.COUNT, 0);
+
+                pivotTableIssues.addRowLabel(20);
+                //pivotTableIssues.addRowLabel(10);
+                //pivotTableIssues.getCTPivotTableDefinition().getPivotFields().getPivotFieldArray(10).setDataField(true);
                 pivotTableIssues.addRowLabel(0);
                 pivotTableIssues.getCTPivotTableDefinition().getPivotFields().getPivotFieldArray(0).setDataField(true);
             } else {
