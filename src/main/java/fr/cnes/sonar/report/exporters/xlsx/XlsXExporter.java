@@ -153,17 +153,23 @@ public class XlsXExporter implements IExporter {
             // Get the reference for Pivot Data 
             XSSFTable table = XlsXTools.findTableByName(allDataSheet, ALL_TABLE_NAME);
 
+            short c2 = 19;
+            short c1 = 0; 
             // Create Pivot Table only if there are findings 
             if (report.getRawIssues().size() > 0) {
                 XSSFPivotTable pivotTableIssues = summarySheet.createPivotTable(table,  new CellReference("A2"));
 
-                pivotTableIssues.addColumnLabel(DataConsolidateFunction.COUNT, 0);
+                // Quick fix to adjust if the results have reviewed/closed items
+                if (allDataSheet.getRow(0).getLastCellNum() > 21) {
+                    c2 = 21;
+                } else if (allDataSheet.getRow(0).getLastCellNum() > 20 ) {
+                    c2 = 20;
+                }
 
-                pivotTableIssues.addRowLabel(20);
-                //pivotTableIssues.addRowLabel(10);
-                //pivotTableIssues.getCTPivotTableDefinition().getPivotFields().getPivotFieldArray(10).setDataField(true);
-                pivotTableIssues.addRowLabel(0);
-                pivotTableIssues.getCTPivotTableDefinition().getPivotFields().getPivotFieldArray(0).setDataField(true);
+                pivotTableIssues.addColumnLabel(DataConsolidateFunction.COUNT, c1);
+                pivotTableIssues.addRowLabel(c2);
+                pivotTableIssues.addRowLabel(c1);
+                pivotTableIssues.getCTPivotTableDefinition().getPivotFields().getPivotFieldArray(c1).setDataField(true);
             } else {
                 row.createCell(1).setCellValue("NO FINDINGS!!!");
             }
@@ -171,15 +177,24 @@ public class XlsXExporter implements IExporter {
             // Get the reference for Pivot Data 
             table = XlsXTools.findTableByName(allHotSheet, HOTSPOT_TABLE_NAME);
         
+            c2 = 10;
+            c1 = 2;
             // Create Pivot Table only if there are findings
             if (report.getRawHotspots().size() > 0) {       
                 XSSFPivotTable pivotTableHot = summarySheet.createPivotTable(table,  new CellReference("D2"));
 
-                pivotTableHot.addColumnLabel(DataConsolidateFunction.COUNT, 1);
-                pivotTableHot.addRowLabel(1);
-                pivotTableHot.addRowLabel(7);
+                System.out.println ("HOT" + allHotSheet.getRow(0).getLastCellNum() );
 
-                pivotTableHot.getCTPivotTableDefinition().getPivotFields().getPivotFieldArray(1).setDataField(true);
+                // Quick fix to adjust if the results have reviewed items
+                if (allHotSheet.getRow(0).getLastCellNum() > 11) {
+                    c2 = 7;
+                    c1 = 1;
+                }
+
+                pivotTableHot.addColumnLabel(DataConsolidateFunction.COUNT, c1);
+                pivotTableHot.addRowLabel(c2);
+                pivotTableHot.addRowLabel(c1);
+                pivotTableHot.getCTPivotTableDefinition().getPivotFields().getPivotFieldArray(c1).setDataField(true);
             } else {
                 row.createCell(4).setCellValue("NO FINDINGS!!!");
             }
